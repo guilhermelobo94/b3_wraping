@@ -6,6 +6,9 @@ Integrantes são:
 
 Guilherme Lobo
 
-Gabriel Medeiros
+Gabriel Sargeiro
 
-Matheus
+Matheus Moura
+
+
+
