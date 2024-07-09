@@ -4,6 +4,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
+from selenium.webdriver.chrome.options import Options
 import time
 import pandas as pd  # Importa a biblioteca pandas para criar o DataFrame
 
@@ -11,9 +12,9 @@ import pandas as pd  # Importa a biblioteca pandas para criar o DataFrame
 url = 'https://sistemaswebb3-listados.b3.com.br/indexPage/day/ibov?language=pt-br'
 
 chrome_options = Options()
-chrome_options.add_argument('--headless')  # Executa o Chrome em modo headless
-chrome_options.add_argument('--no-sandbox')  # Para ambientes sem GUI
-chrome_options.add_argument('--disable-dev-shm-usage')  # Desativa o uso compartilhado da memória para evitar problemas em alguns ambientes
+chrome_options.add_argument('--headless')
+chrome_options.add_argument('--no-sandbox')
+chrome_options.add_argument('--disable-dev-shm-usage')
 
 
 def extract_table_data(soup):
@@ -109,7 +110,6 @@ try:
             break
 
 
-    # Criar um DataFrame com os dados da tabela
     df = pd.DataFrame(all_data, columns=headers)
 
     # Salvar o DataFrame em um arquivo CSV
