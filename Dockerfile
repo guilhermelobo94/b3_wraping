@@ -1,42 +1,42 @@
-# Use uma imagem base do Ubuntu 20.04
-FROM ubuntu:20.04
 
-# Defina o diretório de trabalho
-WORKDIR /wrapping
+FROM python:3.9-slim
 
-# Copie o conteúdo do diretório atual para o diretório de trabalho no contêiner
+WORKDIR /scrapping
+
 COPY . .
-
 # Defina o frontend do APT para não interativo
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Atualize a lista de pacotes e instale as dependências
+# Instalar dependências necessárias
 RUN apt-get update && apt-get install -y \
     wget \
-    curl \
     unzip \
-    python3 \
-    python3-pip \
     gnupg \
-    && rm -rf /var/lib/apt/lists/*
+    ca-certificates \
+    fonts-liberation \
+    libappindicator3-1 \
+    libasound2 \
+    libatk-bridge2.0-0 \
+    libatk1.0-0 \
+    libcups2 \
+    libdbus-1-3 \
+    libdrm2 \
+    libgbm1 \
+    libnspr4 \
+    libnss3 \
+    libxcomposite1 \
+    libxdamage1 \
+    libxrandr2 \
+    xdg-utils \
+    lsb-release  # Adicionando o lsb-release para verificar a versão do Ubuntu
 
-# Adicione o repositório do Google Chrome e instale o Google Chrome
+# Adicionar a chave do Google Chrome e configurar o repositório
 RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
     sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list' && \
     apt-get update && apt-get install -y google-chrome-stable
+# Atualizar o apt e instalar o Google Chrome
+RUN apt-get update && apt-get install -y google-chrome-stable
 
-# Verifique a versão do Google Chrome
-RUN google-chrome --version
+RUN pip install -r requirements.txt
 
-# Baixe e instale uma versão específica do ChromeDriver
-RUN wget -q "https://chromedriver.storage.googleapis.com/114.0.5735.90/chromedriver_linux64.zip" && \
-    unzip chromedriver_linux64.zip && \
-    mv chromedriver /usr/local/bin/ && \
-    chmod +x /usr/local/bin/chromedriver && \
-    rm chromedriver_linux64.zip
-
-# Instale as dependências do Python
-RUN pip3 install --no-cache-dir -r requirements.txt
-
-# Defina o ponto de entrada do contêiner. Modifique conforme necessário.
 CMD ["python3", "scrapping.py"]
