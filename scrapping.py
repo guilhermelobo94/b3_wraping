@@ -6,56 +6,55 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.chrome.options import Options
 import time
-import pandas as pd  # Importa a biblioteca pandas para criar o DataFrame
-
+import pandas as pd
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 
 url = 'https://sistemaswebb3-listados.b3.com.br/indexPage/day/ibov?language=pt-br'
 
 chrome_options = Options()
-chrome_options.add_argument('--headless')
-chrome_options.add_argument('--no-sandbox')
-chrome_options.add_argument('--disable-dev-shm-usage')
+chrome_options.add_argument("--headless")  # Executa o Chrome em modo headless (sem GUI)
+chrome_options.add_argument("--no-sandbox")
+chrome_options.add_argument("--disable-dev-shm-usage")
+chrome_options.add_argument("--disable-gpu")
+chrome_options.add_argument("--remote-debugging-port=9222")
+chrome_options.add_argument("--window-size=1920,1080")
+chrome_options.add_argument("--disable-extensions")
+chrome_options.add_argument("--disable-software-rasterizer")
+chrome_options.add_argument("--log-level=3")  # Reduz a verbosidade dos logs do Chrome
+
 
 
 def extract_table_data(soup):
-    # Encontrar a tabela pela classe
     table = soup.find('table', {'class': 'table table-responsive-sm table-responsive-md'})
 
-    # Verificar se a tabela foi encontrada
     if table:
-        # Extrair os cabeçalhos da tabela
         headers = [header.text.strip() for header in table.find_all('th')]
 
-        # Filtrar o texto '%Setor' dos cabeçalhos se estiver presente
         headers = [header for header in headers if header != '%Setor']
 
-        # Extrair as linhas de dados da tabela
         rows = []
         for row in table.find_all('tr')[1:]:  # Pular o cabeçalho
             cells = row.find_all('td')
             if cells:
                 row_data = [cell.text.strip() for cell in cells]
-                # Verificar se a primeira célula da linha contém textos a serem ignorados
+
                 if row_data[0] not in ['Quantidade Teórica Total', 'Redutor']:
-                    # Remover '%Setor' dos dados, se estiver presente
                     row_data = [data for data in row_data if data != '%Setor']
                     rows.append(row_data)
         return headers, rows
     return [], []
 
 
-driver = webdriver.Chrome()
+driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
 
 try:
-    # Abrir a página
     driver.get(url)
 
-    # Esperar até que o select esteja presente
     select_element = WebDriverWait(driver, 10).until(
         EC.presence_of_element_located((By.ID, "segment"))
     )
 
-    # Selecionar o setor de atuação desejado
     select = Select(select_element)
     select.select_by_visible_text("Setor de Atuação")  # Altere o texto conforme necessário
 
@@ -72,18 +71,15 @@ try:
         # Extrair o conteúdo da página
         page_content = driver.page_source
 
-        # Usar BeautifulSoup para parsear o HTML
         soup = BeautifulSoup(page_content, 'html.parser')
 
-        # Extrair dados da tabela
         current_headers, rows = extract_table_data(soup)
 
-        # Se os cabeçalhos forem encontrados e válidos
         if current_headers:
             if not headers:
-                headers = current_headers  # Captura os cabeçalhos da primeira página
+                headers = current_headers
             else:
-                # Verifica se os cabeçalhos são consistentes com os dados extraídos
+
                 if len(current_headers) == len(headers):
                     all_data.extend(rows)
                 else:
@@ -91,31 +87,24 @@ try:
                         f'Número de colunas inconsistentes: {len(current_headers)} colunas na página, '
                         f'{len(headers)} colunas esperadas.')
 
-        # Tentar encontrar o botão de próxima página
         try:
             next_button = WebDriverWait(driver, 10).until(
                 EC.element_to_be_clickable((By.XPATH, "//li[@class='pagination-next']/a"))
             )
             next_button.click()
 
-            # Aguardar até que a nova página seja carregada
             time.sleep(1)
 
-            # Verificar se a página mudou
             new_page_content = driver.page_source
             if new_page_content == page_content:
                 break
             page_number += 1
-        except Exception as e:
+        except Exception:
             break
-
 
     df = pd.DataFrame(all_data, columns=headers)
 
-    # Salvar o DataFrame em um arquivo CSV
     df.to_csv('dados_tabela.csv', index=False)
 
 finally:
     driver.quit()
-
-
