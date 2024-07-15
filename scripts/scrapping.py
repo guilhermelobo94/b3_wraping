@@ -9,11 +9,13 @@ import time
 import pandas as pd
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
+from datetime import datetime
+
 
 url = 'https://sistemaswebb3-listados.b3.com.br/indexPage/day/ibov?language=pt-br'
 
 chrome_options = Options()
-chrome_options.add_argument("--headless")  # Executa o Chrome em modo headless (sem GUI)
+chrome_options.add_argument("--headless")
 chrome_options.add_argument("--no-sandbox")
 chrome_options.add_argument("--disable-dev-shm-usage")
 chrome_options.add_argument("--disable-gpu")
@@ -21,9 +23,9 @@ chrome_options.add_argument("--remote-debugging-port=9222")
 chrome_options.add_argument("--window-size=1920,1080")
 chrome_options.add_argument("--disable-extensions")
 chrome_options.add_argument("--disable-software-rasterizer")
-chrome_options.add_argument("--log-level=3")  # Reduz a verbosidade dos logs do Chrome
+chrome_options.add_argument("--log-level=3")
 
-
+today = datetime.today().strftime('%Y-%m-%d')
 
 def extract_table_data(soup):
     table = soup.find('table', {'class': 'table table-responsive-sm table-responsive-md'})
@@ -58,7 +60,7 @@ try:
     select = Select(select_element)
     select.select_by_visible_text("Setor de Atuação")  # Altere o texto conforme necessário
 
-    # Aguarde alguns segundos para a página carregar os novos dados (ajuste conforme necessário)
+
     WebDriverWait(driver, 5).until(
         EC.presence_of_element_located((By.CLASS_NAME, "table-responsive-md"))
     )
@@ -104,7 +106,6 @@ try:
 
     df = pd.DataFrame(all_data, columns=headers)
 
-    df.to_csv('dados_tabela.csv', index=False)
-
+    df.to_parquet(f'dados_{today}.parquet', index=False)
 finally:
     driver.quit()
