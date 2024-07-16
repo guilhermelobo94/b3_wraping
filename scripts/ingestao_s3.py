@@ -1,12 +1,20 @@
 import boto3
 from datetime import datetime
 from botocore.exceptions import ClientError
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+aws_access_key_id = os.getenv('AWS_ACCESS_KEY_ID')
+aws_secret_access_key = os.getenv('AWS_SECRET_ACCESS_KEY')
+aws_region = os.getenv('AWS_REGION')
 
 s3_client = boto3.client(
     's3',
-    aws_access_key_id='AKIAQDRB6H65UPQSE2LJ',
-    aws_secret_access_key='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',
-    region_name='us-east-1'
+    aws_access_key_id=aws_access_key_id,
+    aws_secret_access_key=aws_secret_access_key,
+    region_name=aws_region
 )
 
 today = datetime.today().strftime('%Y-%m-%d')
