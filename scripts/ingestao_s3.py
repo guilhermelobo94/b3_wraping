@@ -8,12 +8,14 @@ load_dotenv()
 
 aws_access_key_id = os.getenv('AWS_ACCESS_KEY_ID')
 aws_secret_access_key = os.getenv('AWS_SECRET_ACCESS_KEY')
+aws_session_token=os.getenv('AWS_SESSION_TOKEN')
 aws_region = os.getenv('AWS_REGION')
 
 s3_client = boto3.client(
     's3',
     aws_access_key_id=aws_access_key_id,
     aws_secret_access_key=aws_secret_access_key,
+    aws_session_token=aws_session_token,
     region_name=aws_region
 )
 
@@ -21,7 +23,7 @@ today = datetime.today().strftime('%Y-%m-%d')
 parquet_file = f'dados_{today}.parquet'
 
 directory_name = 'parquet'
-bucket_name = 'bucketfiap'
+bucket_name = 'meu-bucket-dados-b3'
 s3_path = f'{directory_name}/dados_{today}.parquet'
 
 try:
