@@ -27,6 +27,7 @@ chrome_options.add_argument("--log-level=3")
 
 today = datetime.today().strftime('%Y-%m-%d')
 
+
 def extract_table_data(soup):
     table = soup.find('table', {'class': 'table table-responsive-sm table-responsive-md'})
 
@@ -47,6 +48,16 @@ def extract_table_data(soup):
         return headers, rows
     return [], []
 
+
+header_mapping = {
+    'Setor': 'setor',
+    'Código': 'codigo',
+    'Ação': 'acao',
+    'Tipo': 'tipo',
+    'Qtde. Teórica': 'qtde_teorica',
+    'Part. (%)': 'participacao',
+    'Part. (%)Acum.': 'participacao_acumulativo'
+}
 
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
 
@@ -104,7 +115,11 @@ try:
         except Exception:
             break
 
-    df = pd.DataFrame(all_data, columns=headers)
+    formatted_headers = [header_mapping.get(header, header) for header in headers]
+
+    df = pd.DataFrame(all_data, columns=formatted_headers)
+
+    df['data'] = today
 
     df.to_parquet(f'dados_{today}.parquet', index=False)
 finally:
