@@ -1,5 +1,5 @@
 def MyTransform(glueContext, dfc) -> DynamicFrameCollection:
-    from pyspark.sql.functions import datediff, to_date, lit, col, regexp_replace, when
+    from pyspark.sql.functions import datediff, to_date, lit, col, regexp_replace, when, expr
     from awsglue.dynamicframe import DynamicFrame, DynamicFrameCollection
     import pytz
     from datetime import datetime
@@ -21,11 +21,13 @@ def MyTransform(glueContext, dfc) -> DynamicFrameCollection:
     )
 
     df_cleaned = df_cleaned.withColumn(
+        'data_job', to_date(lit(now_sp), 'yyyy-MM-dd')
+    ).withColumn(
         'data_dados', to_date(col('data'), 'yyyy-MM-dd')
     ).drop('data').withColumn(
-        'data_atual', to_date(lit(now_sp), 'yyyy-MM-dd')
+        'data_futura_30_dias', expr('date_add(data_dados, 30)')
     ).withColumn(
-        'diferenca_dias', datediff(col('data_atual'), col('data_dados'))
+        'data_passada_30_dias', expr('date_sub(data_dados, 30)')
     )
 
     df_cleaned = df_cleaned.withColumnRenamed('qtde_teorica_cleaned', 'qtde_teorica') \
