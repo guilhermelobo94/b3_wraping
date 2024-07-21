@@ -1,0 +1,715 @@
+{
+	"jobConfig": {
+		"name": "b3-job-glue",
+		"description": "",
+		"role": "arn:aws:iam::024397233635:role/LabRole",
+		"command": "glueetl",
+		"version": "4.0",
+		"runtime": null,
+		"workerType": "G.1X",
+		"numberOfWorkers": 10,
+		"maxCapacity": 10,
+		"maxRetries": 0,
+		"timeout": 2880,
+		"maxConcurrentRuns": 1,
+		"security": "none",
+		"scriptName": "b3-job-glue.py",
+		"scriptLocation": "s3://aws-glue-assets-024397233635-us-east-1/scripts/",
+		"language": "python-3",
+		"spark": true,
+		"sparkConfiguration": "standard",
+		"jobParameters": [],
+		"tags": [],
+		"jobMode": "VISUAL_MODE",
+		"createdOn": "2024-07-20T22:54:57.870Z",
+		"developerMode": false,
+		"connectionsList": [],
+		"temporaryDirectory": "s3://aws-glue-assets-024397233635-us-east-1/temporary/",
+		"logging": true,
+		"glueHiveMetastore": true,
+		"etlAutoTuning": false,
+		"metrics": true,
+		"observabilityMetrics": true,
+		"bookmark": "job-bookmark-disable",
+		"sparkPath": "s3://aws-glue-assets-024397233635-us-east-1/sparkHistoryLogs/",
+		"flexExecution": false,
+		"minFlexWorkers": null,
+		"maintenanceWindow": null,
+		"pythonPath": ""
+	},
+	"dag": {
+		"node-1721516104490": {
+			"nodeId": "node-1721516104490",
+			"dataPreview": false,
+			"previewAmount": 0,
+			"inputs": [],
+			"name": "Brute S3",
+			"generatedNodeName": "BruteS3_node1721516104490",
+			"classification": "DataSource",
+			"type": "S3",
+			"isCatalog": false,
+			"format": "parquet",
+			"paths": [
+				"s3://meu-bucket-dados-b3/parquet/"
+			],
+			"compressionType": null,
+			"exclusions": [],
+			"groupFiles": null,
+			"groupSize": null,
+			"recurse": true,
+			"maxBand": null,
+			"maxFilesInBand": null,
+			"additionalOptions": {
+				"boundedSize": null,
+				"boundedFiles": null,
+				"enableSamplePath": true,
+				"samplePath": "s3://meu-bucket-dados-b3/sample_b3.parquet",
+				"boundedOption": null
+			},
+			"outputSchemas": [
+				[
+					{
+						"key": "setor",
+						"fullPath": [
+							"setor"
+						],
+						"type": "string"
+					},
+					{
+						"key": "codigo",
+						"fullPath": [
+							"codigo"
+						],
+						"type": "string"
+					},
+					{
+						"key": "acao",
+						"fullPath": [
+							"acao"
+						],
+						"type": "string"
+					},
+					{
+						"key": "tipo",
+						"fullPath": [
+							"tipo"
+						],
+						"type": "string"
+					},
+					{
+						"key": "qtde_teorica",
+						"fullPath": [
+							"qtde_teorica"
+						],
+						"type": "string"
+					},
+					{
+						"key": "participacao",
+						"fullPath": [
+							"participacao"
+						],
+						"type": "string"
+					},
+					{
+						"key": "participacao_acumulativo",
+						"fullPath": [
+							"participacao_acumulativo"
+						],
+						"type": "string"
+					},
+					{
+						"key": "data",
+						"fullPath": [
+							"data"
+						],
+						"type": "string"
+					}
+				]
+			],
+			"calculatedType": "",
+			"codeGenVersion": 2,
+			"inferSchemaChanged": true
+		},
+		"node-1721516270895": {
+			"nodeId": "node-1721516270895",
+			"dataPreview": false,
+			"previewAmount": 0,
+			"inputs": [
+				"node-1721516250129"
+			],
+			"name": "Select From Collection",
+			"generatedNodeName": "SelectFromCollection_node1721516270895",
+			"classification": "Transform",
+			"type": "SelectFromCollection",
+			"index": 0,
+			"parentsValid": true,
+			"calculatedType": "",
+			"codeGenVersion": 2,
+			"outputSchemas": [
+				[
+					{
+						"key": "setor",
+						"fullPath": [
+							"setor"
+						],
+						"type": "string"
+					},
+					{
+						"key": "codigo",
+						"fullPath": [
+							"codigo"
+						],
+						"type": "string"
+					},
+					{
+						"key": "acao",
+						"fullPath": [
+							"acao"
+						],
+						"type": "string"
+					},
+					{
+						"key": "tipo",
+						"fullPath": [
+							"tipo"
+						],
+						"type": "string"
+					},
+					{
+						"key": "qtde_teorica",
+						"fullPath": [
+							"qtde_teorica"
+						],
+						"type": "int"
+					},
+					{
+						"key": "participacao",
+						"fullPath": [
+							"participacao"
+						],
+						"type": "double"
+					},
+					{
+						"key": "participacao_acumulativo",
+						"fullPath": [
+							"participacao_acumulativo"
+						],
+						"type": "double"
+					},
+					{
+						"key": "data_dados",
+						"fullPath": [
+							"data_dados"
+						],
+						"type": "date"
+					},
+					{
+						"key": "data_atual",
+						"fullPath": [
+							"data_atual"
+						],
+						"type": "date"
+					},
+					{
+						"key": "diferenca_dias",
+						"fullPath": [
+							"diferenca_dias"
+						],
+						"type": "int"
+					}
+				]
+			]
+		},
+		"node-1721516250129": {
+			"nodeId": "node-1721516250129",
+			"dataPreview": false,
+			"previewAmount": 0,
+			"inputs": [
+				"node-1721516104490"
+			],
+			"name": "Custom Transform",
+			"generatedNodeName": "CustomTransform_node1721516250129",
+			"classification": "Transform",
+			"type": "CustomCode",
+			"code": "from pyspark.sql.functions import datediff, to_date, lit, col, regexp_replace\nfrom awsglue.dynamicframe import DynamicFrame, DynamicFrameCollection\nimport pytz\nfrom datetime import datetime\n\ntz = pytz.timezone('America/Sao_Paulo')\nnow_sp = datetime.now(tz).strftime('%Y-%m-%d')\n\ndf = dfc.select(list(dfc.keys())[0]).toDF()\n\ndf_cleaned = df.withColumn(\"qtde_teorica\",\n                           regexp_replace(col(\"qtde_teorica\"), \"\\.\", \"\")\n                           ).withColumn(\"qtde_teorica\",\n                                        col(\"qtde_teorica\").cast(\"int\")\n                                        ).withColumn(\"participacao\",\n                                                     regexp_replace(col(\"participacao\"), \",\", \".\").cast(\"double\")\n                                                     ).withColumn(\"participacao_acumulativo\",\n                                                                  regexp_replace(col(\"participacao_acumulativo\"), \",\",\n                                                                                 \".\").cast(\"double\")\n                                                                  )\n\ndf_cleaned = df_cleaned.withColumn('data_dados', to_date(col('data'), 'yyyy-MM-dd')).drop('data')\ndf_cleaned = df_cleaned.withColumn('data_atual', to_date(lit(now_sp), 'yyyy-MM-dd'))\ndf_cleaned = df_cleaned.withColumn('diferenca_dias', datediff(df_cleaned['data_atual'], df_cleaned['data_dados']))\n \nresult_dyf = DynamicFrame.fromDF(df_cleaned, glueContext, \"result_dyf\")\n\nreturn DynamicFrameCollection({\"CustomTransform0\": result_dyf}, glueContext)",
+			"className": "MyTransform",
+			"outputSchemas": [
+				[
+					{
+						"key": "setor",
+						"fullPath": [
+							"setor"
+						],
+						"type": "string"
+					},
+					{
+						"key": "codigo",
+						"fullPath": [
+							"codigo"
+						],
+						"type": "string"
+					},
+					{
+						"key": "acao",
+						"fullPath": [
+							"acao"
+						],
+						"type": "string"
+					},
+					{
+						"key": "tipo",
+						"fullPath": [
+							"tipo"
+						],
+						"type": "string"
+					},
+					{
+						"key": "qtde_teorica",
+						"fullPath": [
+							"qtde_teorica"
+						],
+						"type": "int"
+					},
+					{
+						"key": "participacao",
+						"fullPath": [
+							"participacao"
+						],
+						"type": "double"
+					},
+					{
+						"key": "participacao_acumulativo",
+						"fullPath": [
+							"participacao_acumulativo"
+						],
+						"type": "double"
+					},
+					{
+						"key": "data_dados",
+						"fullPath": [
+							"data_dados"
+						],
+						"type": "date"
+					},
+					{
+						"key": "data_atual",
+						"fullPath": [
+							"data_atual"
+						],
+						"type": "date"
+					},
+					{
+						"key": "diferenca_dias",
+						"fullPath": [
+							"diferenca_dias"
+						],
+						"type": "int"
+					}
+				]
+			],
+			"parentsValid": true,
+			"calculatedType": "",
+			"codeGenVersion": 2
+		},
+		"node-1721516288383": {
+			"nodeId": "node-1721516288383",
+			"dataPreview": false,
+			"previewAmount": 0,
+			"inputs": [
+				"node-1721534332211"
+			],
+			"name": "Refined S3",
+			"generatedNodeName": "RefinedS3_node1721516288383",
+			"classification": "DataSink",
+			"type": "S3",
+			"streamingBatchInterval": 100,
+			"format": "glueparquet",
+			"compression": "snappy",
+			"path": "s3://meu-bucket-dados-b3/refined/",
+			"partitionKeys": [
+				"codigo",
+				"data_dados"
+			],
+			"schemaChangePolicy": {
+				"enableUpdateCatalog": true,
+				"updateBehavior": "UPDATE_IN_DATABASE",
+				"database": "b3-database",
+				"table": "refined"
+			},
+			"updateCatalogOptions": "schemaAndPartitions",
+			"autoDataQuality": {
+				"isEnabled": false,
+				"evaluationContext": null
+			},
+			"calculatedType": "",
+			"codeGenVersion": 2
+		},
+		"node-1721533542561": {
+			"classification": "Transform",
+			"type": "Aggregate",
+			"name": "Aggregate",
+			"inputs": [
+				"node-1721516270895"
+			],
+			"groups": [
+				"setor",
+				"codigo",
+				"acao",
+				"tipo",
+				"diferenca_dias",
+				"data_atual",
+				"data_dados"
+			],
+			"aggs": [
+				{
+					"column": "qtde_teorica",
+					"aggFunc": "sum"
+				},
+				{
+					"column": "participacao",
+					"aggFunc": "avg"
+				},
+				{
+					"column": "participacao_acumulativo",
+					"aggFunc": "sum"
+				}
+			],
+			"generatedNodeName": "Aggregate_node1721533542561",
+			"codeGenVersion": 2,
+			"outputSchemas": [
+				[
+					{
+						"key": "setor",
+						"fullPath": [
+							"setor"
+						],
+						"type": "string"
+					},
+					{
+						"key": "codigo",
+						"fullPath": [
+							"codigo"
+						],
+						"type": "string"
+					},
+					{
+						"key": "acao",
+						"fullPath": [
+							"acao"
+						],
+						"type": "string"
+					},
+					{
+						"key": "tipo",
+						"fullPath": [
+							"tipo"
+						],
+						"type": "string"
+					},
+					{
+						"key": "diferenca_dias",
+						"fullPath": [
+							"diferenca_dias"
+						],
+						"type": "int"
+					},
+					{
+						"key": "data_atual",
+						"fullPath": [
+							"data_atual"
+						],
+						"type": "date"
+					},
+					{
+						"key": "data_dados",
+						"fullPath": [
+							"data_dados"
+						],
+						"type": "date"
+					},
+					{
+						"key": "sum(qtde_teorica)",
+						"fullPath": [
+							"sum(qtde_teorica)"
+						],
+						"type": "long"
+					},
+					{
+						"key": "avg(participacao)",
+						"fullPath": [
+							"avg(participacao)"
+						],
+						"type": "double"
+					},
+					{
+						"key": "sum(participacao_acumulativo)",
+						"fullPath": [
+							"sum(participacao_acumulativo)"
+						],
+						"type": "double"
+					}
+				]
+			]
+		},
+		"node-1721534106775": {
+			"classification": "Transform",
+			"type": "RenameField",
+			"name": "Rename Field",
+			"inputs": [
+				"node-1721533542561"
+			],
+			"sourcePath": "sum(qtde_teorica)",
+			"targetPath": "total_qtde_teorica",
+			"generatedNodeName": "RenameField_node1721534106775",
+			"codeGenVersion": 2,
+			"outputSchemas": [
+				[
+					{
+						"key": "setor",
+						"fullPath": [
+							"setor"
+						],
+						"type": "string"
+					},
+					{
+						"key": "codigo",
+						"fullPath": [
+							"codigo"
+						],
+						"type": "string"
+					},
+					{
+						"key": "acao",
+						"fullPath": [
+							"acao"
+						],
+						"type": "string"
+					},
+					{
+						"key": "tipo",
+						"fullPath": [
+							"tipo"
+						],
+						"type": "string"
+					},
+					{
+						"key": "diferenca_dias",
+						"fullPath": [
+							"diferenca_dias"
+						],
+						"type": "int"
+					},
+					{
+						"key": "data_atual",
+						"fullPath": [
+							"data_atual"
+						],
+						"type": "date"
+					},
+					{
+						"key": "data_dados",
+						"fullPath": [
+							"data_dados"
+						],
+						"type": "date"
+					},
+					{
+						"key": "avg(participacao)",
+						"fullPath": [
+							"avg(participacao)"
+						],
+						"type": "double"
+					},
+					{
+						"key": "sum(participacao_acumulativo)",
+						"fullPath": [
+							"sum(participacao_acumulativo)"
+						],
+						"type": "double"
+					},
+					{
+						"key": "total_qt",
+						"fullPath": [
+							"total_qt"
+						],
+						"type": "long"
+					}
+				]
+			]
+		},
+		"node-1721534114747": {
+			"classification": "Transform",
+			"type": "RenameField",
+			"name": "Rename Field",
+			"inputs": [
+				"node-1721534106775"
+			],
+			"sourcePath": "avg(participacao)",
+			"targetPath": "media_participacao",
+			"generatedNodeName": "RenameField_node1721534114747",
+			"codeGenVersion": 2,
+			"outputSchemas": [
+				[
+					{
+						"key": "setor",
+						"fullPath": [
+							"setor"
+						],
+						"type": "string"
+					},
+					{
+						"key": "codigo",
+						"fullPath": [
+							"codigo"
+						],
+						"type": "string"
+					},
+					{
+						"key": "acao",
+						"fullPath": [
+							"acao"
+						],
+						"type": "string"
+					},
+					{
+						"key": "tipo",
+						"fullPath": [
+							"tipo"
+						],
+						"type": "string"
+					},
+					{
+						"key": "diferenca_dias",
+						"fullPath": [
+							"diferenca_dias"
+						],
+						"type": "int"
+					},
+					{
+						"key": "data_atual",
+						"fullPath": [
+							"data_atual"
+						],
+						"type": "date"
+					},
+					{
+						"key": "data_dados",
+						"fullPath": [
+							"data_dados"
+						],
+						"type": "date"
+					},
+					{
+						"key": "sum(participacao_acumulativo)",
+						"fullPath": [
+							"sum(participacao_acumulativo)"
+						],
+						"type": "double"
+					},
+					{
+						"key": "total_qtde_teorica",
+						"fullPath": [
+							"total_qtde_teorica"
+						],
+						"type": "long"
+					},
+					{
+						"key": "media_participacao",
+						"fullPath": [
+							"media_participacao"
+						],
+						"type": "double"
+					}
+				]
+			]
+		},
+		"node-1721534332211": {
+			"classification": "Transform",
+			"type": "RenameField",
+			"name": "Rename Field",
+			"inputs": [
+				"node-1721534114747"
+			],
+			"sourcePath": "sum(participacao_acumulativo)",
+			"targetPath": "total_participacao_acumulativo",
+			"generatedNodeName": "RenameField_node1721534332211",
+			"codeGenVersion": 2,
+			"outputSchemas": [
+				[
+					{
+						"key": "setor",
+						"fullPath": [
+							"setor"
+						],
+						"type": "string"
+					},
+					{
+						"key": "codigo",
+						"fullPath": [
+							"codigo"
+						],
+						"type": "string"
+					},
+					{
+						"key": "acao",
+						"fullPath": [
+							"acao"
+						],
+						"type": "string"
+					},
+					{
+						"key": "tipo",
+						"fullPath": [
+							"tipo"
+						],
+						"type": "string"
+					},
+					{
+						"key": "diferenca_dias",
+						"fullPath": [
+							"diferenca_dias"
+						],
+						"type": "int"
+					},
+					{
+						"key": "data_atual",
+						"fullPath": [
+							"data_atual"
+						],
+						"type": "date"
+					},
+					{
+						"key": "data_dados",
+						"fullPath": [
+							"data_dados"
+						],
+						"type": "date"
+					},
+					{
+						"key": "total_qtde_teorica",
+						"fullPath": [
+							"total_qtde_teorica"
+						],
+						"type": "long"
+					},
+					{
+						"key": "media_participacao",
+						"fullPath": [
+							"media_participacao"
+						],
+						"type": "double"
+					},
+					{
+						"key": "total_participacao_acumulativo",
+						"fullPath": [
+							"total_participacao_acumulativo"
+						],
+						"type": "double"
+					}
+				]
+			]
+		}
+	},
+	"hasBeenSaved": false,
+	"usageProfileName": null
+}
